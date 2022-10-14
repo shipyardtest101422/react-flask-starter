@@ -14,7 +14,19 @@ jobs:
           timeout-minutes: "10"
       - name: Print Env Data
         run: |
-          export CYPRESS_BASE_URL=${SHIPYARD_ENVIRONMENT_URL}
+          curl CYPRESS_BASE_URL=${SHIPYARD_ENVIRONMENT_URL}
           export CYPRESS_BYPASS_TOKEN=${SHIPYARD_BYPASS_TOKEN}
           env | grep -e SHIPYARD -e CYPRESS
         shell: bash
+      - name: Curl to file
+        run: |
+          apt update && apt install -y curl
+          mkdir uploads
+          curl $SHIPYARD_ENVIRONMENT_URL > uploads/environment.html
+          curl 'https://media0.giphy.com/media/BWv3PAhK8Zntw0XSpd/giphy.gif?cid=ecf05e479ba04b519a016e13b869da900ff4287b58211ac3&rid=giphy.gif' > uploads/test.gif
+        shell: bash
+      - name: Store HTML and gif as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: shipyard-uploads
+          path: uploads
